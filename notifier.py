@@ -1,7 +1,6 @@
 import gmail
 import pyglet
 import time
-
 myLists=['free-food@mit.edu','reuse@mit.edu']
 displayMail=[['a','b','c'] for i in range(5)]
 '''
@@ -23,16 +22,10 @@ def get_mail(user,passwd,list):
         email.fetch()
         email.read()
         if (email.thread_id==email.message_id and email.subject[:3]!="Re:"):
-            print email.sent_at
-            print email.subject
-            print
             if list=='reuse@mit.edu':
-                print email.body[:-142]
                 currentMail.insert(0,[email.subject,email.body[:-142],email.sent_at])
             else:
-                print email.body
                 currentMail.insert(0,[email.subject,email.body,email.sent_at])
-            print
             i+=1
     return currentMail
 
@@ -76,16 +69,15 @@ def notifier(dt,eLists=myLists,loud=True):
     global displayMail
     for e in eLists:
         global displayMail
-        newMail=get_mail('Walconiator','fuckthisshit7', e)
+        newMail=get_mail('user','pass', e)
         if newMail!=[]:
             playMessage=True
         newMail.extend(displayMail)
         displayMail=newMail[:5]
     if playMessage:
         notification.play()
-    print displayMail
 
-
+engine = pyttsx.init()
 pyglet.clock.schedule_interval(notifier, 10)
 pyglet.app.run()
 
