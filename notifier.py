@@ -1,6 +1,7 @@
 import gmail
 import pyglet
 import time
+import pyttsx
 myLists=['free-food@mit.edu','reuse@mit.edu']
 displayMail=[['a','b','c'] for i in range(5)]
 '''
@@ -78,6 +79,8 @@ def notifier(dt,eLists=myLists,loud=True):
         notification.play()
 
 engine = pyttsx.init()
+engine.say("Cruft..... One. An old piece of computer equipment, possibly useless, that keeps hanging around. Two. An old alum. Reuse. This is where you find it.")
+engine.runAndWait()
 pyglet.clock.schedule_interval(notifier, 10)
 pyglet.app.run()
 
