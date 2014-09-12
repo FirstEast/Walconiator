@@ -8,6 +8,7 @@ displayMail=[['a','b','c'] for i in range(5)]
 '''
 __docformat__ = 'restructuredtext'
 window = pyglet.window.Window(fullscreen=True)
+pyglet.gl.glClearColor(1, 1, 1, 1)
 notification = pyglet.media.load('target_acquired.wav', streaming=False)
 
 def get_mail(user,passwd,list):
@@ -42,7 +43,8 @@ def on_draw():
     for i in range(3):
         pyglet.text.Label(str(displayMail[i][2]),
                           font_name='Times New Roman',
-                          font_size=12,
+                          font_size=14,
+                          bold=True,
                           color=(80,1,255,255),
                           x=(1+2*i)*window.width/6, y=11.5/12.0*window.height,
                           width=600,
@@ -50,15 +52,18 @@ def on_draw():
                           anchor_x='center', anchor_y='top').draw()
         pyglet.text.Label(displayMail[i][0],
                           font_name='Times New Roman',
-                          font_size=12,
+                          font_size=14,
+                          bold=True,
                           color=(80,1,255,255),
                           x=(1+2*i)*window.width/6, y=11/12.0*window.height,
                           width=600,
                           multiline=True,
-                          anchor_x='center', anchor_y='center').draw()
+                          anchor_x='center', anchor_y='top').draw()
         pyglet.text.Label(displayMail[i][1],
                           font_name='Times New Roman',
                           font_size=12,
+                          bold=True,
+                          color=(1,1,1,255),
                           x=(1+2*i)*window.width/6, y=10/12.0*window.height,
                           width=600,
                           multiline=True,
