@@ -9,7 +9,7 @@ displayMail=[['a','b','c'] for i in range(5)]
 __docformat__ = 'restructuredtext'
 window = pyglet.window.Window(fullscreen=True)
 pyglet.gl.glClearColor(1, 1, 1, 1)
-notification = pyglet.media.load('target_acquired.wav', streaming=False)
+notification = pyglet.media.load('target_acquired1.wav', streaming=False)
 
 def get_mail(user,passwd,list):
     g = gmail.login(user, passwd)
