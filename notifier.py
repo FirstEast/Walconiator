@@ -3,15 +3,19 @@ import pyglet
 import time
 import urllib
 import urllib2
+from pygame import mixer
 
 ##import pyttsx
+newMail=[]
 myLists=['free-food@mit.edu','reuse@mit.edu']
-displayMail=[['a','b','c'] for i in range(5)]
+mixer.init(16000)
+mixer.music.load('welcome.wav')
+mixer.music.play()
+displayMail=[['subject','message','time'] for i in range(5)]
 '''
 '''
 __docformat__ = 'restructuredtext'
 window = pyglet.window.Window(fullscreen=True)
-music = pyglet.media.Player()
 pyglet.gl.glClearColor(1, 1, 1, 1)
 
 def get_mail(user,passwd,list):
@@ -35,16 +39,25 @@ def get_mail(user,passwd,list):
 
 @window.event
 def on_draw():
+    print "draw"
     window.clear()
     global displayMail
+    pyglet.text.Label('The Walconiator 2.0',
+                      font_name='Helvetica',
+                      font_size=30,
+                      bold=True,
+                      italic=True,
+                      color=(145,7,122,255),
+                      x=220, y=window.height-30,
+                      width=9*window.width/30,
+                      anchor_x='center', anchor_y='top').draw()
     for i in range(3):
         pyglet.text.Label(str(displayMail[i][2]),
                           font_name='Helvetica',
                           font_size=14,
                           bold=True,
-                          italic=True,
                           color=(178,1,1,255),
-                          x=(1+2*i)*window.width/6, y=11.5/12.0*window.height,
+                          x=(1+2*i)*window.width/6, y=11.5/12.0*window.height-50,
                           width=9*window.width/30,
                           multiline=True,
                           anchor_x='center', anchor_y='top').draw()
@@ -53,7 +66,7 @@ def on_draw():
                           font_size=14,
                           bold=True,
                           color=(178,1,1,255),
-                          x=(1+2*i)*window.width/6, y=11/12.0*window.height,
+                          x=(1+2*i)*window.width/6, y=11/12.0*window.height-50,
                           width=9*window.width/30,
                           multiline=True,
                           anchor_x='center', anchor_y='top').draw()
@@ -62,66 +75,71 @@ def on_draw():
                           font_size=12,
                           bold=True,
                           color=(1,1,1,255),
-                          x=(1+2*i)*window.width/6, y=10/12.0*window.height,
+                          x=(1+2*i)*window.width/6, y=10/12.0*window.height-50,
                           width=9*window.width/30,
                           multiline=True,
                           anchor_x='center', anchor_y='top').draw()
+    if not(newMail==[]):
+        voicePlayer()
+        
 
-def voicePlayer(newMail):
+def voicePlayer():
+    print "voice"
+    global newMail
     queue=[]
     checker=[]
-    global music
     for mail in newMail:
         checker.append(mail[0])
     while(len(checker)>0):
         print "checker length", len(checker)
         packets=[]
         text=checker[0]
-        if len(text)>40:
-            i=20
+        if len(text)>90:
+            i=60
             while(text[i]!=' 'and i<len(text)-2):
                 i+=1
             if i==len(text)-1:
-                print text
                 queue.append(urllib.quote_plus(text))
                 checker.pop(0)          
             else:
-                print text[0:i]
                 queue.append(urllib.quote_plus(text[0:i]))
                 checker[0]=text[i+1:]         
         else:
-            print text
             queue.append(urllib.quote_plus(text))
             checker.pop(0)
-    music = pyglet.media.Player()  
-    for text in queue:
-        print text
-        url = "https://translate.google.com/translate_tts?tl=en&q="+text
+    while(mixer.music.get_busy()):
+        time.sleep(0.01)
+    mixer.music.load('feeling.wav')
+    mixer.music.play()
+    for i in range(len(queue)):
+        while(mixer.music.get_busy()):
+            time.sleep(0.01)
+        url = "https://translate.google.com/translate_tts?tl=en&q="+queue[i]
         request = urllib2.Request(url)
         request.add_header('User-agent', 'Mozilla/30.0') 
         opener = urllib2.build_opener()
-        f = open("data.mp3", "wb")
+        f = open("data"+str(i)+".mp3", "wb")
         f.write(opener.open(request).read())
         f.close()
-        source = pyglet.media.load('data.mp3')
-        music.queue(source)
-    feeling=pyglet.media.load('feeling.wav')
-    music.queue(feeling)
-    music.play()
-    
+        mixer.music.load("data"+str(i)+".mp3")
+        mixer.music.play()
+        
 @window.event
 def notifier(dt,eLists=myLists,loud=True):
-    if music.playing==False:
-        playMessage=False
+    print "notify"
+    if mixer.get_busy()==False:
+        print "not busy"
+        global newMail
         global displayMail
+        newMail=[]
+        playMessage=False
         for e in eLists:
-            newMail=get_mail('user','pass', e)
+            newMail.extend(get_mail('user','pass', e))
             if newMail!=[]:
                 oldMail=displayMail
                 displayMail=[x for x in newMail]
                 displayMail.extend(oldMail)
-                displayMail=displayMail[:5]
-                voicePlayer(newMail)
+        displayMail=displayMail[:3]   
 
 ##engine = pyttsx.init()
 ##engine.say("Cruft..... One. An old piece of computer equipment, possibly useless, that keeps hanging around. Two. An old alum. Reuse. This is where you find it.")
