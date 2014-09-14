@@ -6,12 +6,12 @@ import urllib2
 from pygame import mixer
 
 ##import pyttsx
-newMail=[]
-myLists=['free-food@mit.edu','reuse@mit.edu']
+myLists=['free-food@mit.edu','reuse@mit.edu','vultures@mit.edu']
 mixer.init(16000)
 mixer.music.load('welcome.wav')
 mixer.music.play()
-displayMail=[['subject','message','time'] for i in range(5)]
+newMail=[]
+allMail=[['subject','message','time'] for i in range(3)]
 '''
 '''
 __docformat__ = 'restructuredtext'
@@ -31,17 +31,18 @@ def get_mail(user,passwd,list):
         email.read()
         if (email.thread_id==email.message_id and email.subject[:3]!="Re:"):
             if list=='reuse@mit.edu':
-                currentMail.insert(0,[email.subject,email.body[:-142],email.sent_at])
+                currentMail.insert(0,[email.subject,email.body,email.sent_at])
             else:
                 currentMail.insert(0,[email.subject,email.body,email.sent_at])
             i+=1
     return currentMail
 
 @window.event
-def on_draw():
+def on_draw(allMail=allMail):
+    global newMail
     print "draw"
     window.clear()
-    global displayMail
+    displayMail=allMail[:3]
     pyglet.text.Label('The Walconiator 2.0',
                       font_name='Helvetica',
                       font_size=30,
@@ -80,12 +81,12 @@ def on_draw():
                           multiline=True,
                           anchor_x='center', anchor_y='top').draw()
     if not(newMail==[]):
-        voicePlayer()
+        voicePlayer(newMail)
+        newMail=[]
         
 
-def voicePlayer():
+def voicePlayer(newMail):
     print "voice"
-    global newMail
     queue=[]
     checker=[]
     for mail in newMail:
@@ -126,20 +127,17 @@ def voicePlayer():
         
 @window.event
 def notifier(dt,eLists=myLists,loud=True):
+    global allMail
+    global newMail
     print "notify"
     if mixer.get_busy()==False:
         print "not busy"
-        global newMail
-        global displayMail
-        newMail=[]
         playMessage=False
         for e in eLists:
-            newMail.extend(get_mail('user','pass', e))
-            if newMail!=[]:
-                oldMail=displayMail
-                displayMail=[x for x in newMail]
-                displayMail.extend(oldMail)
-        displayMail=displayMail[:3]   
+            mails=get_mail('user','pass', e)
+            for mail in mails:
+                allMail.insert(0,mail)
+                newMail.insert(0,mail)
 
 ##engine = pyttsx.init()
 ##engine.say("Cruft..... One. An old piece of computer equipment, possibly useless, that keeps hanging around. Two. An old alum. Reuse. This is where you find it.")
