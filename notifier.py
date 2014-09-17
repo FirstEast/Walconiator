@@ -134,7 +134,11 @@ def notifier(dt,eLists=myLists,loud=True):
         print "not busy"
         playMessage=False
         for e in eLists:
-            mails=get_mail('user','pass', e)
+            try:
+                mails=get_mail('user','pass', e)
+            except:
+                print "auth error"
+                mails=[]
             for mail in mails:
                 allMail.insert(0,mail)
                 newMail.insert(0,mail)
