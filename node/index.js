@@ -3,14 +3,20 @@
 ////////////////////////
 
 //client username
-user="user";
+var user="user";
 //client password
-pass="pass";
+var pass="pass";
 
-//admin username
-adminUser="user";
-//admin password
-adminPass="pass";
+//client & mailserver admin username
+var adminUser="user";
+//client & mailserver admin password
+var adminPass="pass";
+
+//Walconiator port
+port=1600;
+//mailServer port
+var mailPort=1601;
+
 
 //WALCONIATOR CLIENT SERVER
 var express = require('express');
@@ -41,12 +47,12 @@ io.on('connection', function(socket){
       }
   });
 });
-http.listen(1600, function(){
-  console.log('listening on *:1600');
+http.listen(port, function(){
+  console.log('listening on *:'+port.toString());
 });
 
 //processor for data from parsed emails that sends useful data to socket update group.
 var messageHandler=require('./messageHandler')(io);
 
 //sets up mail server for receiving and parsing emails. Forwards them to handler.
-var mailServer=require('./mailServer')(adminUser,adminPass,messageHandler);
+var mailServer=require('./mailServer')(mailPort,adminUser,adminPass,messageHandler);

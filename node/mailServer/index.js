@@ -1,17 +1,18 @@
-var mailserver = function(handler){ 
+var mailserver = function(serverPort,adminUser,adminPass,handler){ 
     var mailin = require('mailin');
     mailin.start({
-      port: 25,
+      port: serverPort,
       disableWebhook: true // Disable the webhook posting.
     });
 
     /* Access simplesmtp server instance. */
     mailin.on('authorizeUser', function(connection, username, password, done) {
-      if (username == adminUser && password == adminPass) {
+      if (username === adminUser && password === adminPass) {
         done(null, true);
       } else {
         done(new Error("Unauthorized!"), false);
       }
+      console.log('lol');
     });
 
     /* Event emitted when a connection with the Mailin smtp server is initiated. */
