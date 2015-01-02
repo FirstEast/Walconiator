@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Walconiator 3.0</title>
+    <style>
+le>
+<!--     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+ -->
+  </head>
+  <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <h1 id="gameName"></h1>
+      <canvas id="myCanvas" width="0" height="0"></canvas>
+<!--    <script src="http://code.jquery.com/jquery-1.11.1.js"></script> -->
+    <script>
+
+// checks server interaction
+      var socket = io();
+      canvas = document.getElementById('myCanvas');
+      canvas.addEventListener("mousedown", mouseResponse , false);
+      socket.emit('new game');
+      socket.on('yourid', function(msg){
+        socketid=msg;
+        draw();
+      });
+
+      socket.on('winner', function(msg){
+        moveY=null;
+        moveX=null;
+        game=msg;
+        balance=0;
+        if(player=="A"){
+          totalWinnings+=game.balanceA;
+          if(game.balanceA>0){
+            roundWinnings=100;
+          }
+          else{
+            roundWinnings=0;
+          }
+        }
+        else{
+          totalWinnings+=game.balanceB;
+          if(game.balanceB>0){
+            roundWinnings=100;
+          }
+          else{
+            roundWinnings=0;
+          }
+        }
+        status="win";
+        draw();
+      });
+
+
+      socket.on('results', function(msg){
+        results=msg;
+        console.log('done');
+      })
+    </script>
+  </body>
+</html>
