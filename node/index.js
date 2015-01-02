@@ -13,7 +13,7 @@ var adminUser="user";
 var adminPass="pass";
 
 //Walconiator port
-port=1600;
+var port=1600;
 //mailServer port
 var mailPort=1601;
 
@@ -53,6 +53,8 @@ http.listen(port, function(){
 
 //processor for data from parsed emails that sends useful data to socket update group.
 var messageHandler=require('./messageHandler')(io);
+
+//MAILSERVER 
 
 //sets up mail server for receiving and parsing emails. Forwards them to handler.
 var mailServer=require('./mailServer')(mailPort,adminUser,adminPass,messageHandler);

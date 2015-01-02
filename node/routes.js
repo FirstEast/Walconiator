@@ -1,10 +1,10 @@
 var routes=function(app){
     app.get('/', function(req, res){
-      res.sendfile('index.html');
+      res.sendfile('views/index.html');
     });
 
     app.get('/admin', function(req, res){
-      res.sendfile('admin.html');
+      res.sendfile('views/admin.html');
     });
 }
 
