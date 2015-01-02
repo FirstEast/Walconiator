@@ -4,9 +4,11 @@ import time
 import urllib
 import urllib2
 from pygame import mixer
-
+import pytz
+from datetime import datetime
+from pytz import timezone
 ##import pyttsx
-myLists=['free-food@mit.edu','reuse@mit.edu','vultures@mit.edu']
+myLists=['freefood@mit.edu','free-food@mit.edu','reuse@mit.edu','vultures@mit.edu']
 mixer.init(16000)
 mixer.music.load('welcome.wav')
 mixer.music.play()
@@ -22,19 +24,14 @@ def get_mail(user,passwd,list):
     g = gmail.login(user, passwd)
     emails=g.inbox().mail(unread=True, to=list)
     data=[]
-    i=0
     currentMail=[]
     for email in emails:
-        if(i==3):
-            break
         email.fetch()
         email.read()
         if (email.thread_id==email.message_id and email.subject[:3]!="Re:"):
-            if list=='reuse@mit.edu':
-                currentMail.insert(0,[email.subject,email.body,email.sent_at])
-            else:
-                currentMail.insert(0,[email.subject,email.body,email.sent_at])
-            i+=1
+            global xy
+            xy=email.sent_at
+            currentMail.insert(0,[email.subject,email.body,email.sent_at])
     return currentMail
 
 @window.event
@@ -135,7 +132,7 @@ def notifier(dt,eLists=myLists,loud=True):
         playMessage=False
         for e in eLists:
             try:
-                mails=get_mail('user','pass', e)
+                mails=get_mail('Walconiator','fuckthisshit7', e)
             except:
                 print "auth error"
                 mails=[]
